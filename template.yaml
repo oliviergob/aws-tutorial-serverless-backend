@@ -1,14 +1,44 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+Parameters:
+  StageName:
+    Type: String
+    Default: prod
+
 Resources:
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub "serverless-webapp-${StageName}-${AWS::AccountId}"
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref StageName
+  
   LambdaFunctionOverHttps:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: resources/functions/configuration
       Handler: function.handler
       Runtime: python3.9
+      FunctionName: GetConfiguration
       Events:
-        HttpPost:
-          Type: Api
+        HttpGet:
+          Type: HttpApi
           Properties:
+            ApiId: !Ref HttpApi
             Path: '/configuration'
-            Method: get
+            Method: GET
+
+
+Outputs:
+  HttpApiUrl:
+    Description: URL of your API endpoint
+    Value:
+      !Sub "https://${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${StageName}/"
+  BucketName:
+    Description: Bucked Name
+    Value:
+      !Ref S3Bucket
