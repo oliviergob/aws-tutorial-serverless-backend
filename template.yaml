@@ -23,7 +23,21 @@ Resources:
       CodeUri: resources/functions/configuration
       Handler: function.handler
       Runtime: python3.9
+      Architectures: 
+       - arm64
       FunctionName: GetConfiguration
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action: 
+                - 's3:GetObject'
+              Resource:
+                - !Sub "arn:aws:s3:::${S3Bucket}/*"
+            
+      Environment:
+        Variables:
+            S3_BUCKET: !Ref S3Bucket
       Events:
         HttpGet:
           Type: HttpApi
