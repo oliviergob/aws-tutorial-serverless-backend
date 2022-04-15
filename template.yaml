@@ -16,7 +16,16 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: !Ref StageName
-  
+      CorsConfiguration:
+        AllowOrigins:
+          - '*'
+        AllowMethods: 
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - '*'
+
   LambdaFunctionOverHttps:
     Type: AWS::Serverless::Function
     Properties:

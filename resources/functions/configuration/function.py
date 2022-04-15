@@ -16,6 +16,14 @@ def handler(event, context):
     # Parsing response file
     configfile = yaml.safe_load(response["Body"])
     
-    return(configfile)
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS'
+        },
+        'body': json.dumps(configfile)
+    }
 
 
